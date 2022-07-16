@@ -2,7 +2,7 @@ package randnum
 
 import "testing"
 
-func TestRunTimeWeightRandSucc(t *testing.T) {
+func TestRunTimeWeightRandSuccess(t *testing.T) {
 	var err error
 	var chosen uint32
 	//  0~6   => 1
@@ -101,7 +101,7 @@ func TestRunTimeWeightRandUnmatch(t *testing.T) {
 	}
 }
 
-func TestRunTimeWeightNegitaveRand(t *testing.T) {
+func TestRunTimeWeightNegativeRand(t *testing.T) {
 	var err error
 	var chosen uint32
 	//  0~6   => 1
@@ -115,5 +115,141 @@ func TestRunTimeWeightNegitaveRand(t *testing.T) {
 	}
 	if chosen != 10 {
 		t.Error(r1)
+	}
+}
+
+func helperSingleSelectCompare(r, l singleSelect) bool {
+	if r.edge != l.edge {
+		return false
+	}
+	if r.prev != l.prev {
+		return false
+	}
+	if r.next != l.next {
+		return false
+	}
+	return true
+}
+
+func TestWeightedRandPoolSuccess(t *testing.T) {
+	var err error
+	var chosen uint32
+	data := []uint32{7, 1, 5, 10, 13, 7}
+
+	pool := WeightRandPool{}
+	err = pool.Build(data)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if pool.x != 3 {
+		t.Fatal("x not 3")
+	}
+	if pool.y != 25 {
+		t.Fatal("y not 25")
+	}
+	if len(pool.data) != 3 {
+		t.Fatal("len(pool.data] not 3")
+	}
+	if !helperSingleSelectCompare(pool.data[0], singleSelect{
+		edge: 15,
+		prev: 10,
+		next: 7,
+	}) {
+		t.Fatal("data[0] err")
+	}
+	if !helperSingleSelectCompare(pool.data[1], singleSelect{
+		edge: 21,
+		prev: 1,
+		next: 7,
+	}) {
+		t.Fatal("data[0] err")
+	}
+	if !helperSingleSelectCompare(pool.data[2], singleSelect{
+		edge: 25,
+		prev: 7,
+		next: 7,
+	}) {
+		t.Fatal("data[0] err")
+	}
+
+	chosen, err = pool.DoRand(0, 0)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 10 {
+		t.Error(0, 0)
+	}
+
+	chosen, err = pool.DoRand(0, 14)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 10 {
+		t.Error(0, 0)
+	}
+
+	chosen, err = pool.DoRand(0, 15)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 7 {
+		t.Error(0, 0)
+	}
+
+	chosen, err = pool.DoRand(0, 24)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 7 {
+		t.Error(0, 0)
+	}
+
+	chosen, err = pool.DoRand(1, 0)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 1 {
+		t.Error(0, 0)
+	}
+
+	chosen, err = pool.DoRand(1, 20)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 1 {
+		t.Error(0, 0)
+	}
+
+	chosen, err = pool.DoRand(1, 21)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 7 {
+		t.Error(0, 0)
+	}
+
+	chosen, err = pool.DoRand(1, 24)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 7 {
+		t.Error(0, 0)
+	}
+
+	chosen, err = pool.DoRand(2, 0)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 7 {
+		t.Error(0, 0)
+	}
+
+	chosen, err = pool.DoRand(2, 24)
+	if err != nil {
+		t.Error(err)
+	}
+	if chosen != 7 {
+		t.Error(0, 0)
 	}
 }

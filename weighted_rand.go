@@ -2,7 +2,7 @@ package randnum
 
 import "fmt"
 
-// RundTimeWeightRand Return the weighted readom result in runtime data
+// RunTimeWeightRand Return the weighted random result in runtime data
 // data is like weight1,choice1,weight2,choice2,etc...
 func RunTimeWeightRand(rand int, data []uint32) (uint32, error) {
 	var err error
@@ -36,15 +36,85 @@ func RunTimeWeightRand(rand int, data []uint32) (uint32, error) {
 	return 0, err
 }
 
-// TODO pre constructed weight rand with O(1) time complecity algorithm
+type singleSelect struct {
+	edge, prev, next uint32
+}
+
 type WeightRandPool struct {
+	x, y uint32
+	data []singleSelect
 }
 
 func (p *WeightRandPool) Build(data []uint32) error {
-
+	if len(data)%2 != 0 {
+		return fmt.Errorf("len=%d err", len(data))
+	}
+	p.x = uint32(len(data) / 2)
+	sum := uint32(0)
+	for i := 0; i < len(data); i++ {
+		if i%2 == 0 {
+			sum += data[i]
+		}
+	}
+	p.y = sum
+	tmp := make([]uint32, len(data))
+	copy(tmp, data)
+	for i := 0; i < len(tmp); i++ {
+		if i%2 == 0 {
+			tmp[i] = tmp[i] * p.x
+		}
+	}
+	min := -1
+	minVal := sum
+	max := -1
+	maxVal := uint32(0)
+	for {
+		min = -1
+		minVal = sum
+		max = -1
+		maxVal = uint32(0)
+		for i := 0; i < len(tmp); i++ {
+			if i%2 == 0 {
+				cur := tmp[i]
+				if cur == 0 {
+					continue
+				}
+				if cur < minVal {
+					min = i
+					minVal = cur
+				}
+				if cur > maxVal {
+					max = i
+					maxVal = cur
+				}
+			}
+		}
+		if maxVal == 0 {
+			break
+		}
+		if min == -1 {
+			min = max
+		}
+		p.data = append(p.data, singleSelect{
+			edge: tmp[min],
+			prev: tmp[min+1],
+			next: tmp[max+1],
+		})
+		tmp[max] -= sum - tmp[min]
+		tmp[min] = 0
+	}
+	if len(p.data) != int(p.x) {
+		panic("internal len err")
+	}
 	return nil
 }
 
-func (p *WeightRandPool) DoRand(randA, randB int) (chosen int, err error) {
-	return 0, nil
+func (p *WeightRandPool) DoRand(randA, randB int) (chosen uint32, err error) {
+	randA = randA % int(p.x)
+	randB = randB % int(p.y)
+	if randB < int(p.data[randA].edge) {
+		return p.data[randA].prev, nil
+	} else {
+		return p.data[randA].next, nil
+	}
 }
