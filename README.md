@@ -7,7 +7,7 @@ Pre-Built -> O(1)
 
 But pre-built methods needs 1 more (2 finally random numbers) to finish this procedure
 
-Input just data just like:\
+Input data just like:\
 input -> weight1,choice1,weight2,choice2,etc...\
 rand -> some random int value, link rand.Int
 
