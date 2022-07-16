@@ -1,3 +1,3 @@
-module github.com/caskeep/randum
+module github.com/caskeep/randnum
 
 go 1.18

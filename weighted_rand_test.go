@@ -345,7 +345,7 @@ func BenchmarkStaticTimeWeightedRandomLen24(b *testing.B) {
 // Benchmark results
 // goos: linux
 // goarch: amd64
-// pkg: github.com/caskeep/randum
+// pkg: github.com/caskeep/randnum
 // cpu: Intel(R) Core(TM) i7-7700 CPU @ 3.60GHz
 // BenchmarkRunTimeWeightedRandomLen3-8            49886893                21.53 ns/op
 // BenchmarkStaticTimeWeightedRandomLen3-8         72011685                14.29 ns/op
@@ -356,4 +356,4 @@ func BenchmarkStaticTimeWeightedRandomLen24(b *testing.B) {
 // BenchmarkRunTimeWeightedRandomLen24-8           19592414                60.89 ns/op
 // BenchmarkStaticTimeWeightedRandomLen24-8        71411912                14.29 ns/op
 // PASS
-// ok      github.com/caskeep/randum       12.856s
+// ok      github.com/caskeep/randnum       12.856s
