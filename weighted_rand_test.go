@@ -341,3 +341,19 @@ func BenchmarkStaticTimeWeightedRandomLen24(b *testing.B) {
 	r := rand.New(rand.NewSource(randSource))
 	helperBenchmarkStaticTime(b, r, data)
 }
+
+// Benchmark results
+// goos: linux
+// goarch: amd64
+// pkg: github.com/caskeep/randum
+// cpu: Intel(R) Core(TM) i7-7700 CPU @ 3.60GHz
+// BenchmarkRunTimeWeightedRandomLen3-8            49886893                21.53 ns/op
+// BenchmarkStaticTimeWeightedRandomLen3-8         72011685                14.29 ns/op
+// BenchmarkRunTimeWeightedRandomLen6-8            47187850                25.12 ns/op
+// BenchmarkStaticTimeWeightedRandomLen6-8         71503300                14.40 ns/op
+// BenchmarkRunTimeWeightedRandomLen12-8           28984764                41.09 ns/op
+// BenchmarkStaticTimeWeightedRandomLen12-8        83873653                14.01 ns/op
+// BenchmarkRunTimeWeightedRandomLen24-8           19592414                60.89 ns/op
+// BenchmarkStaticTimeWeightedRandomLen24-8        71411912                14.29 ns/op
+// PASS
+// ok      github.com/caskeep/randum       12.856s
