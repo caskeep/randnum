@@ -4,32 +4,32 @@ import "fmt"
 
 // RunTimeWeightRand Return the weighted random result in runtime data
 // data is like weight1,choice1,weight2,choice2,etc...
-func RunTimeWeightRand(rand int, data []uint32) (uint32, error) {
+func RunTimeWeightRand(rand int, input []uint32) (uint32, error) {
 	var err error
-	if len(data)%2 != 0 {
+	if len(input)%2 != 0 {
 		err = fmt.Errorf("len(data) mod 2 != 0")
-		data = data[0 : len(data)-1]
+		input = input[0 : len(input)-1]
 	}
 	if rand < 0 {
 		rand = -rand
 	}
 	sum := uint64(0)
-	for i := 0; i < len(data); i++ {
+	for i := 0; i < len(input); i++ {
 		if i%2 == 0 {
-			sum += uint64(data[i])
+			sum += uint64(input[i])
 		}
 	}
 	realRand := uint32(uint64(rand) % sum)
 	cur := uint32(0)
-	for i := 0; i < len(data); i++ {
+	for i := 0; i < len(input); i++ {
 		if i%2 == 0 {
-			cur += data[i]
-			if i+1 >= len(data) {
+			cur += input[i]
+			if i+1 >= len(input) {
 				panic("weight rand internal err")
 			}
 		} else {
 			if realRand < cur {
-				return data[i], err
+				return input[i], err
 			}
 		}
 	}
@@ -40,28 +40,31 @@ type singleSelect struct {
 	edge, prev, next uint32
 }
 
+// WeightRandPool is pre-built weighted random pool
 type WeightRandPool struct {
 	x, y uint32
 	data []singleSelect
 }
 
-func (p *WeightRandPool) Build(data []uint32) error {
-	if len(data) == 0 {
+// Build builds pre-calculated data structure,
+// see: https://www.keithschwarz.com/darts-dice-coins/
+func (p *WeightRandPool) Build(input []uint32) error {
+	if len(input) == 0 {
 		return fmt.Errorf("len==0")
 	}
-	if len(data)%2 != 0 {
-		return fmt.Errorf("len=%d err", len(data))
+	if len(input)%2 != 0 {
+		return fmt.Errorf("len=%d err", len(input))
 	}
-	p.x = uint32(len(data) / 2)
+	p.x = uint32(len(input) / 2)
 	sum := uint32(0)
-	for i := 0; i < len(data); i++ {
+	for i := 0; i < len(input); i++ {
 		if i%2 == 0 {
-			sum += data[i]
+			sum += input[i]
 		}
 	}
 	p.y = sum
-	tmp := make([]uint32, len(data))
-	copy(tmp, data)
+	tmp := make([]uint32, len(input))
+	copy(tmp, input)
 	for i := 0; i < len(tmp); i++ {
 		if i%2 == 0 {
 			tmp[i] = tmp[i] * p.x
@@ -112,6 +115,7 @@ func (p *WeightRandPool) Build(data []uint32) error {
 	return nil
 }
 
+// DoRand returns chosen select value
 func (p *WeightRandPool) DoRand(randA, randB int) (chosen uint32, err error) {
 	randA = randA % int(p.x)
 	randB = randB % int(p.y)

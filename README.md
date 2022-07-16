@@ -1,15 +1,19 @@
 # randnum
 
-Weight random algorithm with runtime or pre-built data structure
-Time complexcity:
-Runtime   -> O(n)
+Weight random algorithm with runtime or pre-built data structure\
+Time complexity:\
+Runtime -> O(n)\
 Pre-Built -> O(1)
 
-Input just data just like:
-data -> weight1,choice1,weight2,choice2,etc...
+But pre-built methods needs 1 more (2 finally random numbers) to finish this procedure
+
+Input just data just like:\
+input -> weight1,choice1,weight2,choice2,etc...\
 rand -> some random int value, link rand.Int
 
 Benchmark result:
+
+```shell
 // goos: linux
 // goarch: amd64
 // pkg: github.com/caskeep/randnum
@@ -24,8 +28,9 @@ Benchmark result:
 // BenchmarkStaticTimeWeightedRandomLen24-8        71411912                14.29 ns/op
 // PASS
 // ok      github.com/caskeep/randnum       12.856s
+```
 
-Seen as len(input/data) grow, pre-built is always stable complexcity.
+Seen as len(input/data) grow, runtime cpu time grows, but pre-built is always stable complexity.
 
 Further reading:
 [Darts, Dice, and Coins: Sampling from a Discrete Distribution](https://www.keithschwarz.com/darts-dice-coins/)
