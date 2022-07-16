@@ -46,6 +46,9 @@ type WeightRandPool struct {
 }
 
 func (p *WeightRandPool) Build(data []uint32) error {
+	if len(data) == 0 {
+		return fmt.Errorf("len==0")
+	}
 	if len(data)%2 != 0 {
 		return fmt.Errorf("len=%d err", len(data))
 	}

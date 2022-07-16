@@ -261,6 +261,17 @@ func TestWeightedRandPoolSuccess(t *testing.T) {
 	}
 }
 
+func TestWeightedRandPoolLenZero(t *testing.T) {
+	var err error
+	data := []uint32{}
+
+	pool := WeightRandPool{}
+	err = pool.Build(data)
+	if err == nil {
+		t.Error(err)
+	}
+}
+
 func helperBenchmarkRunTime(b *testing.B, r *rand.Rand, data []uint32) {
 	var err error
 	for i := 0; i < b.N; i++ {
