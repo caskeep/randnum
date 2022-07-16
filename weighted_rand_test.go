@@ -1,6 +1,13 @@
 package randnum
 
-import "testing"
+import (
+	"math/rand"
+	"testing"
+)
+
+const (
+	randSource = int64(1232)
+)
 
 func TestRunTimeWeightRandSuccess(t *testing.T) {
 	var err error
@@ -252,4 +259,85 @@ func TestWeightedRandPoolSuccess(t *testing.T) {
 	if chosen != 7 {
 		t.Error(0, 0)
 	}
+}
+
+func helperBenchmarkRunTime(b *testing.B, r *rand.Rand, data []uint32) {
+	var err error
+	for i := 0; i < b.N; i++ {
+		_, err = RunTimeWeightRand(r.Int(), data)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func helperBenchmarkStaticTime(b *testing.B, r *rand.Rand, data []uint32) {
+	var err error
+	pool := WeightRandPool{}
+	err = pool.Build(data)
+	if err != nil {
+		b.Error(err)
+	}
+	for i := 0; i < b.N; i++ {
+		_, err = pool.DoRand(r.Int(), r.Int())
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkRunTimeWeightedRandomLen3(b *testing.B) {
+	data := []uint32{7, 1, 5, 10, 13, 7}
+	r := rand.New(rand.NewSource(randSource))
+	helperBenchmarkRunTime(b, r, data)
+}
+
+func BenchmarkStaticTimeWeightedRandomLen3(b *testing.B) {
+	data := []uint32{7, 1, 5, 10, 13, 7}
+	r := rand.New(rand.NewSource(randSource))
+	helperBenchmarkStaticTime(b, r, data)
+}
+
+func BenchmarkRunTimeWeightedRandomLen6(b *testing.B) {
+	data := []uint32{7, 1, 5, 2, 13, 3, 78, 4, 5, 6, 13, 7}
+	r := rand.New(rand.NewSource(randSource))
+	helperBenchmarkRunTime(b, r, data)
+}
+
+func BenchmarkStaticTimeWeightedRandomLen6(b *testing.B) {
+	data := []uint32{7, 1, 5, 2, 13, 3, 78, 4, 5, 6, 13, 7}
+	r := rand.New(rand.NewSource(randSource))
+	helperBenchmarkStaticTime(b, r, data)
+}
+
+func BenchmarkRunTimeWeightedRandomLen12(b *testing.B) {
+	data := []uint32{7, 1, 5, 2, 13, 3, 78, 4, 5, 6, 13, 7,
+		45, 8, 78, 9, 89, 10, 32, 11, 78, 12}
+	r := rand.New(rand.NewSource(randSource))
+	helperBenchmarkRunTime(b, r, data)
+}
+
+func BenchmarkStaticTimeWeightedRandomLen12(b *testing.B) {
+	data := []uint32{7, 1, 5, 2, 13, 3, 78, 4, 5, 6, 13, 7,
+		45, 8, 78, 9, 89, 10, 32, 11, 78, 12}
+	r := rand.New(rand.NewSource(randSource))
+	helperBenchmarkStaticTime(b, r, data)
+}
+
+func BenchmarkRunTimeWeightedRandomLen24(b *testing.B) {
+	data := []uint32{7, 1, 5, 2, 13, 3, 78, 4, 5, 6, 13, 7,
+		45, 8, 78, 9, 89, 10, 32, 11, 78, 12,
+		45, 13, 78, 14, 89, 15, 32, 16, 78, 17,
+		35, 18, 56, 19, 67, 20, 78, 21, 53, 22, 56, 23, 56, 24}
+	r := rand.New(rand.NewSource(randSource))
+	helperBenchmarkRunTime(b, r, data)
+}
+
+func BenchmarkStaticTimeWeightedRandomLen24(b *testing.B) {
+	data := []uint32{7, 1, 5, 2, 13, 3, 78, 4, 5, 6, 13, 7,
+		45, 8, 78, 9, 89, 10, 32, 11, 78, 12,
+		45, 13, 78, 14, 89, 15, 32, 16, 78, 17,
+		35, 18, 56, 19, 67, 20, 78, 21, 53, 22, 56, 23, 56, 24}
+	r := rand.New(rand.NewSource(randSource))
+	helperBenchmarkStaticTime(b, r, data)
 }
